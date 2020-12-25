@@ -11,6 +11,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,12 +29,13 @@ import tw.group4._14_.init.ImageProcess;
 import tw.group4.util.Hibernate;
 
 
-
+@Lazy
 @Controller
 //@SessionAttributes(names = {"pageNo"})
 public class CRUDControllerAP {
 
 	@Autowired
+	@Qualifier("ProductBeanDAOService")
 	private ProductBeanDAOService pDaoservice;
 	
 	@Autowired
@@ -69,7 +72,7 @@ public class CRUDControllerAP {
 	@RequestMapping(path = "/14/CRUD.ctrl", method = RequestMethod.GET) //DataTable 版
 	public String processAction23(Model m) {
 		
-			
+//			System.out.println(pDaoservice);
 			List<ARTProduct> pList = pDaoservice.selectNoPage();
 			
 			m.addAttribute("pList", pList);
@@ -79,8 +82,8 @@ public class CRUDControllerAP {
 	
 	@Hibernate
 	@RequestMapping(path = "/14/deleteProduct.ctrl", method = RequestMethod.GET) //刪除商品
-	private String processDelete(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo, 
-			@RequestParam(name = "productId" ,required = false)String productid)
+	public String processDelete(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo, 
+			@RequestParam(name = "productId" ,required = true)String productid)
 			 {
 
 		boolean result = pDaoservice.delete(productid);
@@ -109,10 +112,11 @@ public class CRUDControllerAP {
 	
 	@Hibernate
 	@RequestMapping(path = "/14/updateProduct.ctrl", method = RequestMethod.GET) //[舊版] 修改商品
-	private String processUpdate(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo,
+	public String processUpdate(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo,
 			@RequestParam(name = "productid") String productid )
 			 {
-		System.out.println("productid"+productid);
+//		System.out.println("productid"+productid);
+//		System.out.println(pDaoservice);
 		ARTProduct ap = pDaoservice.select(productid);
 		m.addAttribute("ap", ap);
 
@@ -123,7 +127,7 @@ public class CRUDControllerAP {
 	}
 	@Hibernate
 	@RequestMapping(path = "/14/updateDoneProduct.ctrl", method = RequestMethod.POST) //修改商品
-	private String processUpdateDone(Model m, @RequestParam(name = "pageNo",required = false) Integer pageNo, 
+	public String processUpdateDone(Model m, @RequestParam(name = "pageNo",required = false) Integer pageNo, 
 			@RequestParam(name = "APNUM") Integer apNum, @RequestParam(name = "APPRICE") String apPrice,
 			@RequestParam(name = "APTITLE") String apTitle, @RequestParam(name = "productid") String productid, @RequestParam(name = "APDES") String APDES,
 			@RequestParam(name = "myFiles" ) MultipartFile mFile) throws IOException {
@@ -154,7 +158,7 @@ public class CRUDControllerAP {
 	//FORM:FORM 難用的東西
 	@Hibernate
 	@RequestMapping(path = "/14/updateFormDone.ctrl", method = RequestMethod.POST) //想不開
-	private String processUpdateFormDone(@ModelAttribute("ap") ARTProduct ap, BindingResult result, Model m) {
+	public String processUpdateFormDone(@ModelAttribute("ap") ARTProduct ap, BindingResult result, Model m) {
 		if(ap.getProductImgBlob() == null) {
 			ARTProduct originArtProduct = pDaoservice.select(ap.getProductId());
 			ap.setProductImg(originArtProduct.getProductImg());
@@ -175,9 +179,9 @@ public class CRUDControllerAP {
 	
 	@Hibernate
 	@RequestMapping(path = "/14/createProduct.ctrl", method = RequestMethod.POST) // 新增商品
-	private String processCreate(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo,
+	public String processCreate(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo,
 			@RequestParam(name = "APNUM") Integer apNum,@RequestParam(name = "APPRICE") String apPrice, 
-			@RequestParam(name = "APTITLE") String apTitle, @RequestParam(name = "APTYPE",required = false) String apType,
+			@RequestParam(name = "APTITLE") String apTitle, @RequestParam(name = "APTYPE",required = false) String apType, @RequestParam(name = "APTYPE2",required = false) String apSubType,
 			@RequestParam(name = "APDES",required = false) String apDes, @RequestParam(name = "myFiles") MultipartFile mFile)  {
 
 //		String fileName = mFile.getOriginalFilename();
@@ -211,17 +215,24 @@ public class CRUDControllerAP {
 	
 		
 //		int num = Integer.parseInt(apNum);
+		
+//		apDes.replaceAll("(\r\n|\n)", "<br />");
+		apDes.replace("\\r\\n | /\n | \r\n/g","<br>");
+		
 		ARTProduct pd = new ARTProduct();
 		pd.setProductTitle(apTitle);
 		pd.setProductPrice(apPrice);
 		pd.setProductNum(apNum);
-		pd.setProductType(apType);
+		pd.setProductType(apType); 
+		pd.setProductSubType(apSubType);
 		pd.setProductDes(apDes);
+		pd.setProductScore(1);
+		pd.setProductRater(1);
+		pd.setProductMessage(0);
 //		pd.setProductImgBlob(blob);
 		try {
 			pd.setProductImgBlob(mFile.getBytes());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -234,7 +245,7 @@ public class CRUDControllerAP {
 	}
 	@Hibernate
 	@RequestMapping(path="/14/showOneProductCMS.ctrl") //列出單項商品
-	private String processDetial(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo,
+	public String processDetial(Model m, @RequestParam(name = "pageNo" ,required = false) Integer pageNo,
 			@RequestParam(name = "productid") String apNum) {
 		ARTProduct ap = pDaoservice.select(apNum);
 		m.addAttribute("ap",ap);
@@ -250,8 +261,5 @@ public class CRUDControllerAP {
 	}
 	
 	//刪除會員訂單之類的東西從以下開始
-	
-
-	
 	
 }

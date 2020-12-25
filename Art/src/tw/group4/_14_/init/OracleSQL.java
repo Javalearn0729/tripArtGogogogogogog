@@ -29,6 +29,7 @@ public class OracleSQL {
 	
 	private static final String DROP_MessageBoardRecord  = "DROP TABLE MBRECORD";
 	
+	private static final String DROP_EntryClickRate  = "DROP TABLE ENTRYCLICKRATE";
 
 	private static final String CREATE_APMember = " CREATE TABLE APMEMBER " 
 			
@@ -43,13 +44,15 @@ public class OracleSQL {
 	private static final String CREATE_ArtProduct = "CREATE TABLE Artproduct " 
 			+ "(apid number generated as identity constraint Artproduct_PK primary key, "
 			+ " aptitle				varchar2(200), " 
-			+ " aptype				varchar2(50),  "
-			+ " apprice				varchar2(64),  " 
+			+ " aptype				varchar2(150),  "
+			+ " apsubtype			varchar2(150),  "
+			+ " apprice				varchar2(164),  " 
 			+ " apimg			varchar2(200),  "
 			+ " apdes				CLOB,  "		
 			+ " apnum				number(8,2),"
 			+ " apscore				number(8,2),"
 			+ " aprater				number(8,2),"
+			+ " apmessage			number(8,2),"
 			+ " apimgBlob				BLOB )";
 			
 	
@@ -65,11 +68,11 @@ public class OracleSQL {
 	
 	private static final String CREATE_Orders_Oracle = "Create Table ORDERSAP "
 			+ "(ORDERNOAP  integer GENERATED as IDENTITY constraint ORDERSAP_PK primary key, "
-			+ " MEMBERID          varchar2(20), "
+			+ " MEMBERID          varchar2(200), "
 			+ " EMAIL   		  varchar2(164), "
 			+ " SHIPPINGADDRESS   varchar2(164), "
-			+ " BNO               varchar2(20), " 
-			+ " invoiceTitle      varchar2(72), " 
+			+ " BNO               varchar2(200), " 
+			+ " invoiceTitle      varchar2(172), " 
 			+ " TOTAL      		  int, " 
 			+ " ORDERDATE         Date "
 			+ " )";
@@ -80,7 +83,7 @@ public class OracleSQL {
 //			+ " ORDERNOAP           	 int, "
 			+ " PRODUCTTITLEAP           varchar2(172), "
 			+ " PRODUCTNUMAP             int, "
-			+ " PRODUCTPRICEAP           varchar2(20) "
+			+ " PRODUCTPRICEAP           varchar2(200) "
 			+ " ) ";
 	
 	
@@ -88,8 +91,10 @@ public class OracleSQL {
 			+ "(MESSAGENOAP number generated as identity constraint MESSAGENOAP_PK primary key, "
 			+ " APID 			   integer ,"
 			+ " MEMBERID           varchar2(172), "
+			+ " FAKENAME           varchar2(172), "
 			+ " TIME               Date, "
 			+ " SUBJECTAP          varchar2(172), "
+			+ " TITLE              varchar2(100), "
 			+ " SCORE              number, "
 			+ " SCORESTRING        varchar2(172), "
 			+ " CONTENTAP          CLOB "
@@ -98,11 +103,17 @@ public class OracleSQL {
 	
 	private static final String CREATE_AlertsCenter = "Create TABLE ALERTSCENTER "
 			+ "(ALERTNO number generated as identity constraint ALERTNO_PK primary key, "
-			+ " LINK 			   varchar2(172) ,"
-			+ " ICON           	   varchar2(172), "
-			+ " TIME               Date, "
+			+ " MEMBERID 		   number ,"
+			+ " MEMBERNAME 		   varchar2(150) ,"
+			+ " LINK 			   varchar2(150) ,"
+			+ " ICON           	   varchar2(150), "
 			+ " TYPE               varchar2(100), "
-			+ " CONTENTAC          varchar2(172) "
+			+ " TIME               varchar2(100), "
+			+ " ISSUE              varchar2(100), "
+			+ " ISSUEID            number, "
+			+ " CONTENTAC          varchar2(172), "
+			+ " DESCRIPTION        varchar2(200), "
+			+ " STATUS             number "
 			+ " ) ";
 
 	
@@ -111,6 +122,18 @@ public class OracleSQL {
 			+ " MEMBERID 		   number ,"
 			+ " APID           	   number, "
 			+ " STATUS             number "
+			+ " ) ";
+	
+
+	private static final String CREATE_EntryClickRate = "Create TABLE ENTRYCLICKRATE "
+			+ "(ECRNO number generated as identity constraint ECRNO primary key, "
+			+ " TICKET 		   number ,"
+			+ " SHOP           number, "
+			+ " RESTAURANT     number, "
+			+ " MAP            number, "
+			+ " NEARBY         number, "
+			+ " COURSE         number, "
+			+ " ARTIST         number "
 			+ " ) ";
 	
 	
@@ -200,6 +223,14 @@ public class OracleSQL {
 
 	public static String getCreateMessageboardrecord() {
 		return CREATE_MessageBoardRecord;
+	}
+
+	public static String getDropEntryclickrate() {
+		return DROP_EntryClickRate;
+	}
+
+	public static String getCreateEntryclickrate() {
+		return CREATE_EntryClickRate;
 	}
 	
 	

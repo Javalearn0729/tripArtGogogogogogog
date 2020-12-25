@@ -29,16 +29,16 @@ public class CreativeShopDAO {
 		}
 		return false;
 	}
-
-	public boolean checkReservation(int shopId) {
-		Session session = sessionFacory.getCurrentSession();
-		CreativeShopBean result = session.get(CreativeShopBean.class, shopId);
-
-		if (result.getReservation() == 1) {
-			return true;
-		}
-		return false;
-	}
+//
+//	public boolean checkReservation(int shopId) {
+//		Session session = sessionFacory.getCurrentSession();
+//		CreativeShopBean result = session.get(CreativeShopBean.class, shopId);
+//
+//		if (result.getReservation() != null) {
+//			return true;
+//		}
+//		return false;
+//	}
 
 	public CreativeShopBean insert(CreativeShopBean bean) {
 		Session session = sessionFacory.getCurrentSession();
@@ -128,7 +128,7 @@ public class CreativeShopDAO {
 
 	public CreativeShopBean update(int shopId, String shopName, int memberId, String image, String intro,
 			String cityName, String address, String openTime, String phone, String fax, String email, String facebook,
-			String website, int clicks, int reservation) {
+			String website, int clicks, byte[] reservation) {
 
 		Session session = sessionFacory.getCurrentSession();
 		CreativeShopBean result = session.get(CreativeShopBean.class, shopId);
@@ -169,7 +169,7 @@ public class CreativeShopDAO {
 	
 	public List<CreativeShopBean> select16OrderByShopId() {
 		Session session = sessionFacory.getCurrentSession();
-		Query<CreativeShopBean> query = session.createQuery("From CreativeShopBean order by shopId ASC",
+		Query<CreativeShopBean> query = session.createQuery("From CreativeShopBean order by shopId DESC",
 				CreativeShopBean.class);
 		List<CreativeShopBean> list = query.setMaxResults(16).list();
 		return list;
@@ -183,11 +183,11 @@ public class CreativeShopDAO {
 		return list;
 	}
 	
-	public List<CreativeShopBean> select4OrderByPopularity() {
+	public List<CreativeShopBean> select9OrderByPopularity() {
 		Session session = sessionFacory.getCurrentSession();
 		Query<CreativeShopBean> query = session.createQuery("From CreativeShopBean order by shopId DESC",
 				CreativeShopBean.class);
-		List<CreativeShopBean> list = query.setMaxResults(4).list();
+		List<CreativeShopBean> list = query.setMaxResults(9).list();
 		return list;
 	}
 	

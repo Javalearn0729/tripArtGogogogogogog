@@ -6,12 +6,29 @@
 <head>
 <script>
 $(document).ready( function () {
-    $('#table_id').DataTable();
+    $('#table_11').DataTable({
+    	language: {
+    		search: "在表格中搜尋：",
+    		lengthMenu:"每頁顯示 _MENU_ 筆資料",
+    		zeroRecords: "没有符合的结果",
+    		info: "顯示第 _START_ 至 _END_ 項结果，共 _TOTAL_ 項",
+    		infoEmpty: "顯示第 0 至 0 項结果，共 0 項",
+    		paginate: {
+                first: "首頁",
+                previous: "上一頁",
+                next: "下一頁",
+                last: "末頁"
+            },
+            infoFiltered: "(已比對 _MAX_ 項結果)",
+    	
+    	}
+        	
+    } );
 } );
 </script>
 </head>
-<div>
-	<span> 
+<div align="center">
+	<span style="border: outset; background-color: rgb(239, 243, 11);margin: 1px;" > 
 		<a href="GoCreate.ctrl">新增</a>&nbsp;&nbsp; 
 		<a href="GoDel.ctrl">刪除</a>&nbsp;&nbsp;
 		<a href="GoSearch.ctrl">查詢</a>&nbsp;&nbsp; 
@@ -19,7 +36,7 @@ $(document).ready( function () {
 	</span>
 </div>
 <h1 align="center">查詢結果</h1>
-<table id="table_id" class="display">
+<table id="table_11" class="display">
 		<thead>
 			<tr>
 				<th>編號</th>
@@ -39,16 +56,39 @@ $(document).ready( function () {
 				<td>${reSearchSA.theme_SA }</td>
 				<td>${reSearchSA.classification_SA }</td>
 				<td>
-					<form action="delSearch.ctrl" method="POST">
+					<form action="delSearch.ctrl" method="POST" id="dataSA">
 						<input type="hidden" value="${reSearchSA.id_SA}"  name="id_SA"/>
-						<input type="submit" value="刪除" id="button-1"/>
 					</form>
+					<input type="button" id="submit" class="btn btn-outline-info" value="刪除" onclick="return deleteSA()">
+					
 					<form action="fixSA.ctrl" method="POST">
 						<input type="hidden" value="${reSearchSA.id_SA}"  name="id_SA"/>
-						<input type="submit" value="修改" id="button-2"/>
+						<input type="submit" class="btn btn-outline-info" value="修改" id="button-2"/>
 					</form>
 				</td>
 			</tr>
 			</c:forEach>
 		</tbody>
 	</table>
+	<script>
+	function deleteSA() {
+		swal({
+				  title: "是否確認刪除?",
+				  text: "刪除前最後確認!",
+				  icon: "warning",
+				  buttons: true,
+				  dangerMode: true,
+				})
+				.then((orderOK) => {
+					  if (orderOK) {
+						  swal("刪除藝人成功!", 
+							    	{icon: "success",});  
+						  setTimeout(function(){$("#dataSA").submit(); });
+						 			
+					  } else {
+					    swal("操作已取消!");
+					  }
+					});
+			
+			}
+	</script>

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import tw.group4._14_.dashboard.dao.DashboardService;
+import tw.group4._14_.dashboard.model.EntryClickRate;
 import tw.group4._18_.buyer.DAO.CourseBeanDAOMainFront;
 import tw.group4._18_.buyer.DAO.CourseBeanServiceMainFront;
 import tw.group4._18_.buyer.model.CourseCartCo;
@@ -26,23 +28,23 @@ public class CourseBeanControllerMainFront {
 
 	@Autowired
 	private CourseBeanServiceMainFront cBeanServiceF;
+	
+	@Autowired
+	private DashboardService dbService;
 
 	// 主頁面
 	@Hibernate
 	@RequestMapping(path = "/18/cSelectAllFront.ctrl", method = RequestMethod.GET) // 網址
 	public String processActionSelectAllF(Model m, HttpSession session) {
-//		 @RequestParam(name = "coHot")int coHot
-//		CourseCartCo ccco = (CourseCartCo) session.getAttribute("ccco");
-//		
-//				if (ccco == null) {
-//					ccco = new CourseCartCo();
-//			        session.setAttribute("ccco", ccco);
-//				}
 				
+		//
+		EntryClickRate ecr = new EntryClickRate();
+		ecr.setCourse(1);
+		dbService.insert(ecr);
+		//
+		
 		List<CourseFront> selectAllF = cBeanServiceF.selectAllF();
 		m.addAttribute("cListF", selectAllF);
-//	    String str =   (String) m.getAttribute("Update");
-//	    m.addAttribute("end1", str);
 		
 		return "18/buyerCo/18_CustomerSelectAll"; // jsp名字
 	}
@@ -55,11 +57,11 @@ public class CourseBeanControllerMainFront {
 		CourseFront cos = cBeanServiceF.selectF(coId);
 		cos.setCoHot(cos.getCoHot() + 1 ); // 點擊次數的欄位+1
 		m.addAttribute("cfd", cos);
-		
 
 		return "18/buyerCo/18_CourseDetail"; // jsp名字
 	}
 
+	
 	// 關鍵字查詢
 	@Hibernate
 	@RequestMapping(path = "/18/searchByWord.ctrl", method = RequestMethod.GET) // form action

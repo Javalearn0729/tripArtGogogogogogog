@@ -48,17 +48,17 @@ public class AOPCheckSessionAndIdentity {
 //
 //	}
 	
-//	網誌映射常用註釋
-	@Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) " +
-		    "|| @annotation(org.springframework.web.bind.annotation.GetMapping)" +
-		    "|| @annotation(org.springframework.web.bind.annotation.PostMapping)" +
-		    "|| @annotation(org.springframework.web.bind.annotation.PatchMapping)" +
-		    "|| @annotation(org.springframework.web.bind.annotation.PutMapping)" +
-		    "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping)"
-		)
-	public void mappingAnnotations() {
-		
-	}
+//	網誌映射常用註釋，測試搭配@Within使用失敗
+//	@Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) " +
+//		    "|| @annotation(org.springframework.web.bind.annotation.GetMapping)" +
+//		    "|| @annotation(org.springframework.web.bind.annotation.PostMapping)" +
+//		    "|| @annotation(org.springframework.web.bind.annotation.PatchMapping)" +
+//		    "|| @annotation(org.springframework.web.bind.annotation.PutMapping)" +
+//		    "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping)"
+//		)
+//	public void mappingAnnotations() {
+//		
+//	}
 	
 //	有@ResponseBody註釋的所有方法
 	@Pointcut("@annotation(org.springframework.web.bind.annotation.ResponseBody)")
@@ -66,8 +66,14 @@ public class AOPCheckSessionAndIdentity {
 		
 	}
 	
-//	在@Contoller之下，有映射用註釋的所有方法；但排除@ResponseBody註釋的方法	
-	@Around("controllerClassAnnotation() && mappingAnnotations() && !responseBodyAnnotation()")
+//	有@ResponseBody註釋的所有方法
+	@Pointcut("@annotation(org.springframework.messaging.handler.annotation.MessageMapping)")
+	public void messageMappingAnnotation() {
+		
+	}
+	
+//	在@Contoller之下，有映射用註釋的所有方法；但排除@ResponseBody和@MessageMapping註釋的方法	
+	@Around("controllerClassAnnotation() && !responseBodyAnnotation() && !messageMappingAnnotation()")
 	public Object returnUrlValueAroundAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		
 		System.out.println("<<<------------@Around Advice 前面開始分隔線------------>>>");
@@ -76,6 +82,7 @@ public class AOPCheckSessionAndIdentity {
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
 		HttpServletResponse response = ((ServletRequestAttributes) requestAttributes).getResponse();
+		System.out.println("Client端點擊的路徑: "+request.getRequestURI());
 //		再用HttpServletRequest取得session
 		HttpSession session = request.getSession();
 //		在過濾器什麼都還沒做之前，取得sessionTimeoutToken的值
@@ -141,7 +148,7 @@ public class AOPCheckSessionAndIdentity {
 
 //		計算伺服器重啟後發送請求次數，來判斷伺服器是否剛重啟
 		requestCounter++;
-		System.out.println("Client端發送請求次數：" + requestCounter);
+		System.out.println("Client端發送請求次數: " + requestCounter);
 
 //		如果session中sessionTimeoutToken為空，就是創一個放"valid"
 		String sessionTimeoutToken = (String) session.getAttribute("sessionTimeoutToken");

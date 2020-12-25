@@ -24,7 +24,7 @@ public class ProductBeanDAOImp {
 	private Session session;
 	private SessionFactory sessionFactory;
 	private int pageNo = 0; // 存放目前顯示之頁面的編號
-	private int pageSize = 9;
+	private int pageSize = 8;
 	private int totalPages = 1;
 	private String query;
 
@@ -79,12 +79,12 @@ public class ProductBeanDAOImp {
 	public List<ARTProduct> selectQueryAll(int pageNo, String query) {
 
 		Session session = sessionFactory.getCurrentSession();
-		String countQ = "Select count (ap.productId) From ARTProduct ap WHERE ap.productType = '"+query+"'";
+		String countQ = "Select count (ap.productId) From ARTProduct ap WHERE ap.productSubType = '"+query+"'";
 		Query countQuery = session.createQuery(countQ);
 		Long countResult = (Long) countQuery.uniqueResult();
 		int lastPageNum = (int) (Math.ceil(countResult / pageSize));
 
-		Query<ARTProduct> queryList = session.createQuery("From ARTProduct ap WHERE ap.productType = '"+query+"' ORDER BY ap.productId", ARTProduct.class);
+		Query<ARTProduct> queryList = session.createQuery("From ARTProduct ap WHERE ap.productSubType = '"+query+"' ORDER BY ap.productId", ARTProduct.class);
 		
 		queryList.setFirstResult((pageNo - 1) * pageSize);
 		queryList.setMaxResults(pageSize);
@@ -127,7 +127,7 @@ public class ProductBeanDAOImp {
 	
 	public int getQueryPages(String query) {
 		Session session = sessionFactory.getCurrentSession();
-		String countQ = "Select count (ap.productId) From ARTProduct ap WHERE ap.productType = '"+query+"'";
+		String countQ = "Select count (ap.productId) From ARTProduct ap WHERE ap.productSubType = '"+query+"'";
 		Query countQuery = session.createQuery(countQ);
 		Long countResult = (Long) countQuery.uniqueResult();
 		System.out.println("countResult" + countResult);
@@ -187,7 +187,19 @@ public class ProductBeanDAOImp {
 		return list;
 	}
 	
-
+	public List<ARTProduct> selectNoImg() {
+		Session session = sessionFactory.getCurrentSession();
+//		String countQ = "Select * From ARTProduct";
+//		Query<ARTProduct> query = session.createSQLQuery(countQ).addEntity(ARTProduct.class);
+//		countQuery.setProperties(pd);
+		
+		Query<ARTProduct> query = session.createQuery("From ARTProduct ap ORDER BY ap.productId", ARTProduct.class);
+		
+		query.setFirstResult(1);
+		query.setMaxResults(9);
+		List<ARTProduct> list = query.list();
+		return list;
+	}
 	
 
 }

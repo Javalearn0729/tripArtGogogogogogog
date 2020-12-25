@@ -9,6 +9,9 @@ public class TestExecute {
 		
 		ExecuteCreateTable03 A =new ExecuteCreateTable03();
 		A.execute03();
+		
+//		int a = Integer.parseInt("08");
+//		System.out.println(a);
 	}
 	
 }

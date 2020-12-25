@@ -6,23 +6,27 @@ import javax.persistence.Transient;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.annotation.SessionScope;
 
 import tw.group4._14_.back.ARTProduct;
 import tw.group4._14_.front.model.OrderListBeamAP;
 
 
-
+//@Scope("session")
 @Service("ProductBeanDAOService")
 public class ProductBeanDAOService {
+	
+	@Autowired
 	private ProductBeanDAOImp pDAO;
 	
 	public ProductBeanDAOService() {
 		
 	}
 
-	@Autowired
+//	@Autowired
 	public ProductBeanDAOService(ProductBeanDAOImp pDAO) {
 		this.pDAO = pDAO;
 	}
@@ -87,6 +91,10 @@ public class ProductBeanDAOService {
 	
 	public List<OrderListBeamAP> selectUserOrderListNoPage() {
 		return pDAO.selectUserOrderListNoPage();
+	}
+	
+	public List<ARTProduct> selectNoImg() {
+		return pDAO.selectNoImg();
 	}
 	
 }
